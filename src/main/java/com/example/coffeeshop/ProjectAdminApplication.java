@@ -1,4 +1,4 @@
-package com.example.project_admin;
+package com.example.coffeeshop;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
