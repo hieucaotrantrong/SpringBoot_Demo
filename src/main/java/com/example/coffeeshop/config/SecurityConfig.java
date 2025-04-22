@@ -59,8 +59,10 @@ public class SecurityConfig {
         @Bean
         public CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration configuration = new CorsConfiguration();
-                configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // Địa chỉ React app
+                configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); 
                 configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                configuration.setAllowedHeaders(Arrays.asList("*")); // Cho phép tất cả header add 2 dong
+                configuration.setExposedHeaders(Arrays.asList("Authorization"));
                 configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
                 configuration.setAllowCredentials(true);
                 configuration.setMaxAge(3600L);

@@ -18,7 +18,7 @@ import jakarta.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@CrossOrigin(origins = "http://localhost:3000") 
 @RestController
 @RequestMapping("/api")
 public class UserRestController {
@@ -53,7 +53,6 @@ public class UserRestController {
             User user = usersRepository.findByUsername(authRequest.getUsername())
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-            // Thêm claims với role
             Map<String, Object> claims = new HashMap<>();
             claims.put("roles", user.getRole()); // Thêm dòng này
 
@@ -71,15 +70,7 @@ public class UserRestController {
         return ResponseEntity.ok("User registered successfully");
     }
 
-    @GetMapping("/user/profile")
-    public ResponseEntity<User> getUserProfile(Authentication authentication) {
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new IllegalStateException("User not authenticated");
-        }
-        User user = usersRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        return ResponseEntity.ok(user);
-    }
+
 
     @PutMapping("/user/update")
     public ResponseEntity<String> updateUserProfile(Authentication authentication, @RequestBody User updatedUser) {
@@ -118,7 +109,7 @@ public class UserRestController {
         usersRepository.deleteById(id);
         return ResponseEntity.ok("User deleted successfully");
     }
-
+        
     static class AuthRequest {
         private String username;
         private String password;
