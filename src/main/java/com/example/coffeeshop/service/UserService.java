@@ -1,16 +1,17 @@
 package com.example.coffeeshop.service;
 
-import com.example.coffeeshop.entity.User;
-import com.example.coffeeshop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.example.coffeeshop.entity.User;
+import com.example.coffeeshop.repository.UsersRepository;
 
 import java.util.List;
 
 @Service
 public class UserService {
     @Autowired
-    private UserRepository userRepository;
+    private UsersRepository userRepository;
 
     // Đăng ký người dùng mới
     public User register(User user) {

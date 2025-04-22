@@ -21,17 +21,15 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.example.coffeeshop.repository.UserRepository;
+import com.example.coffeeshop.repository.UsersRepository;
 import com.example.coffeeshop.security.JwtAuthFilter;
-
-import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
         @Autowired
-        private UserRepository userRepository;
+        private UsersRepository userRepository;
 
         @Bean
         public PasswordEncoder passwordEncoder() {
@@ -80,28 +78,17 @@ public class SecurityConfig {
                                 .securityMatcher("/api/**") // Chỉ áp dụng cho các yêu cầu /api/**
                                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                                 .csrf(csrf -> csrf.disable()) // Tắt CSRF cho API
-                                .sessionManagement(session -> session
-                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Quan trọng
-                                )
                                 .formLogin(form -> form.disable()) // Tắt form login cho /api/**
-                                .exceptionHandling(exception -> exception
-                                                .authenticationEntryPoint((request, response, authException) -> response
-                                                                .sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                                                                                "Unauthorized") // 401
-                                                )
-                                                .accessDeniedHandler((request, response,
-                                                                accessDeniedException) -> response.sendError(
-                                                                                HttpServletResponse.SC_FORBIDDEN,
-                                                                                "Forbidden") // 403
-                                                ))
                                 .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("/api/register", "/api/auth/login", "/api/welcome")
+                                                .requestMatchers("/api/register", "/api/generateToken", "/api/welcome")
                                                 .permitAll()
                                                 .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
                                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                                .requestMatchers("/api/staff/**").hasRole("STAFF")
-                                                .requestMatchers("/api/barista/**").hasRole("BARISTA")
                                                 .anyRequest().authenticated())
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Stateless cho
+                                                                                                        // API
+                                )
                                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();

@@ -17,10 +17,11 @@ public class TableController {
     // Tạo bàn mới
     @PostMapping("/create")
     public CoffeeTable createTable(@RequestBody CoffeeTable table) {
+        table.setStatus("CHƯA ĐẶT");
         return tableService.createTable(table);
     }
 
-    // Lấy tất cả bàn
+    // Lấy tất cả
     @GetMapping("/all")
     public List<CoffeeTable> getAllTables() {
         return tableService.getAllTables();
@@ -30,7 +31,9 @@ public class TableController {
     @PutMapping("/update/{id}")
     public CoffeeTable updateTableStatus(@PathVariable Long id, @RequestBody CoffeeTable tableUpdate) {
         CoffeeTable existingTable = tableService.getTableById(id);
-        existingTable.setStatus(tableUpdate.getStatus());
+        // existingTable.setStatus(tableUpdate.getStatus());
+        existingTable.setStatus("ĐÃ ĐẶT");
+        existingTable.setDescription(tableUpdate.getDescription());
         return tableService.updateTable(existingTable);
     }
 
