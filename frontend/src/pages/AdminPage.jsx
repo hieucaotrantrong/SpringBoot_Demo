@@ -1,22 +1,132 @@
-import React, { useState, useEffect } from 'react';
-import axiosInstance from '../services/axiosInstance';
+import React, { useEffect, useState } from "react";
+import axiosInstance from "../services/axiosInstance";
 
-function AdminPage() {
+export default function AdminPage() {
+    const [users, setUsers] = useState([]);
+    const [newUser, setNewUser] = useState({
+        username: "",
+        password: "",
+        name: "",
+        age: "",
+        address: "",
+        role: "ROLE_USER"
+    });
+    const [editingUser, setEditingUser] = useState(null);
+
     const [tables, setTables] = useState([]);
     const [newTable, setNewTable] = useState({ tableNumber: '', description: '', status: 'CHƯA ĐẶT' });
-    const [message, setMessage] = useState("");
-    const [loading, setLoading] = useState(false);
     const [editingTable, setEditingTable] = useState(null);
 
-    // Fetch danh sách bàn
-    useEffect(() => {
+    const [message, setMessage] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const token = localStorage.getItem("token");
+
+    // Fetch người dùng
+    const fetchUsers = async () => {
+        try {
+            const response = await fetch("/api/admin/users", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = await response.json();
+            setUsers(data);
+        } catch (error) {
+            console.error("Lỗi khi lấy danh sách người dùng:", error);
+        }
+    };
+
+    // Fetch bàn
+    const fetchTables = () => {
         axiosInstance.get('/admin/tables/all')
             .then(response => setTables(response.data))
             .catch(error => {
                 setMessage("Có lỗi khi lấy danh sách bàn!");
                 console.error('Error fetching tables:', error);
             });
+    };
+
+    useEffect(() => {
+        fetchUsers();
+        fetchTables();
     }, []);
+
+    // Thêm người dùng
+    const handleCreateUser = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            const response = await fetch("/api/admin/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(newUser)
+            });
+            if (response.ok) {
+                fetchUsers();
+                setNewUser({
+                    username: "", password: "", name: "", age: "", address: "", role: "ROLE_USER"
+                });
+            }
+        } catch (error) {
+            console.error("Lỗi khi thêm người dùng:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Chỉnh sửa người dùng
+    const handleEditUser = (user) => {
+        setEditingUser(user);
+        setNewUser({
+            username: user.username,
+            password: "",
+            name: user.name,
+            age: user.age,
+            address: user.address,
+            role: user.role
+        });
+    };
+
+    // Cập nhật người dùng
+    const handleUpdateUser = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            const response = await fetch(`/api/admin/users/${editingUser.id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(newUser)
+            });
+            if (response.ok) {
+                fetchUsers();
+                setEditingUser(null);
+                setNewUser({ username: "", password: "", name: "", age: "", address: "", role: "ROLE_USER" });
+            }
+        } catch (error) {
+            console.error("Lỗi khi cập nhật người dùng:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Xóa người dùng
+    const handleDeleteUser = async (id) => {
+        if (!window.confirm("Bạn có chắc muốn xóa người dùng này?")) return;
+        try {
+            const response = await fetch(`/api/admin/users/${id}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (response.ok) fetchUsers();
+        } catch (error) {
+            console.error("Lỗi khi xóa người dùng:", error);
+        }
+    };
 
     // Thêm bàn mới
     const handleCreateTable = (e) => {
@@ -33,13 +143,13 @@ function AdminPage() {
                 setNewTable({ tableNumber: '', description: '', status: 'CHƯA ĐẶT' });
             })
             .catch(error => {
-                alert("Có lỗi khi thêm bàn! Vui lòng thử lại.");
+                alert("Có lỗi khi thêm bàn!");
                 console.error('Error creating table:', error);
             })
             .finally(() => setLoading(false));
     };
 
-    // Xóa bàn với xác nhận
+    // Xóa bàn
     const handleDeleteTable = (id) => {
         if (window.confirm("Bạn có chắc muốn xóa bàn này không?")) {
             setLoading(true);
@@ -49,7 +159,7 @@ function AdminPage() {
                     alert("Xóa bàn thành công!");
                 })
                 .catch(error => {
-                    alert("Có lỗi khi xóa bàn! Vui lòng thử lại.");
+                    alert("Có lỗi khi xóa bàn!");
                     console.error('Error deleting table:', error);
                 })
                 .finally(() => setLoading(false));
@@ -76,13 +186,13 @@ function AdminPage() {
         setLoading(true);
         axiosInstance.put(`/admin/tables/update/${newTable.tableNumber}`, newTable)
             .then(response => {
-                setTables(prev => prev.map(table => table.id === newTable.tableNumber ? response.data : table));
+                setTables(prev => prev.map(table => table.tableNumber === newTable.tableNumber ? response.data : table));
                 alert("Cập nhật bàn thành công!");
                 setEditingTable(null);
                 setNewTable({ tableNumber: '', description: '', status: 'CHƯA ĐẶT' });
             })
             .catch(error => {
-                alert("Có lỗi khi cập nhật bàn! Vui lòng thử lại.");
+                alert("Có lỗi khi cập nhật bàn!");
                 console.error('Error updating table:', error);
             })
             .finally(() => setLoading(false));
@@ -91,57 +201,112 @@ function AdminPage() {
     return (
         <div className="container mt-5">
             <h2>Xin chào Admin!</h2>
-            <p>Trang quản lý bàn và người dùng.</p>
+            <p>Trang quản lý người dùng và bàn</p>
 
+            {/* Người Dùng */}
+            <h4 className="mt-4">Quản Lý Người Dùng</h4>
+            <form onSubmit={editingUser ? handleUpdateUser : handleCreateUser}>
+                <div className="mb-3">
+                    <label>Tài Khoản</label>
+                    <input className="form-control" value={newUser.username}
+                        onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
+                        required disabled={!!editingUser} />
+                </div>
+                <div className="mb-3">
+                    <label>Mật Khẩu {editingUser ? "(bỏ trống nếu không đổi)" : ""}</label>
+                    <input type="password" className="form-control" value={newUser.password}
+                        onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                        required={!editingUser} />
+                </div>
+                <div className="mb-3">
+                    <label>Họ Tên</label>
+                    <input className="form-control" value={newUser.name}
+                        onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} required />
+                </div>
+                <div className="mb-3">
+                    <label>Tuổi</label>
+                    <input type="number" className="form-control" value={newUser.age}
+                        onChange={(e) => setNewUser({ ...newUser, age: e.target.value })} />
+                </div>
+                <div className="mb-3">
+                    <label>Địa Chỉ</label>
+                    <input className="form-control" value={newUser.address}
+                        onChange={(e) => setNewUser({ ...newUser, address: e.target.value })} />
+                </div>
+                <div className="mb-3">
+                    <label>Quyền</label>
+                    <select className="form-control" value={newUser.role}
+                        onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}>
+                        <option value="ROLE_USER">ROLE_USER</option>
+                        <option value="ROLE_ADMIN">ROLE_ADMIN</option>
+                    </select>
+                </div>
+                <button className="btn btn-primary" type="submit" disabled={loading}>
+                    {editingUser ? "Cập Nhật Người Dùng" : "Thêm Người Dùng"}
+                </button>
+            </form>
+
+            <table className="table table-bordered mt-3">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Họ Tên</th>
+                        <th>Tuổi</th>
+                        <th>Địa Chỉ</th>
+                        <th>Vai Trò</th>
+                        <th>Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {users.map(user => (
+                        <tr key={user.id}>
+                            <td>{user.username}</td>
+                            <td>{user.name}</td>
+                            <td>{user.age}</td>
+                            <td>{user.address}</td>
+                            <td>{user.role}</td>
+                            <td>
+                                <button className="btn btn-warning me-2" onClick={() => handleEditUser(user)}>Sửa</button>
+                                <button className="btn btn-danger" onClick={() => handleDeleteUser(user.id)}>Xóa</button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+
+            {/* Quản Lý Bàn */}
+            <h4 className="mt-5">Quản Lý Bàn</h4>
             {message && (
-                <div className="alert alert-info alert-dismissible fade show" role="alert">
-                    {message}
-                    <button type="button" className="btn-close" aria-label="Close" onClick={() => setMessage("")}></button>
-                </div>
+                <div className="alert alert-info">{message}</div>
             )}
-
-            <h4>Thêm Bàn Mới</h4>
-            <form onSubmit={handleCreateTable}>
+            <form onSubmit={editingTable ? handleUpdateTable : handleCreateTable}>
                 <div className="mb-3">
-                    <label htmlFor="tableNumber" className="form-label">Số Bàn</label>
-                    <input
-                        type="number"
-                        id="tableNumber"
-                        className="form-control"
-                        value={newTable.tableNumber}
+                    <label>Số Bàn</label>
+                    <input className="form-control" value={newTable.tableNumber}
                         onChange={(e) => setNewTable({ ...newTable, tableNumber: e.target.value })}
-                        required
-                    />
+                        required />
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="description" className="form-label">Mô Tả</label>
-                    <input
-                        type="text"
-                        id="description"
-                        className="form-control"
-                        value={newTable.description}
+                    <label>Mô Tả</label>
+                    <input className="form-control" value={newTable.description}
                         onChange={(e) => setNewTable({ ...newTable, description: e.target.value })}
-                        required
-                    />
+                        required />
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="status" className="form-label">Trạng Thái</label>
-                    <select
-                        id="status"
-                        className="form-control"
-                        value={newTable.status}
-                        onChange={(e) => setNewTable({ ...newTable, status: e.target.value })}
-                    >
+                    <label>Trạng Thái</label>
+                    <select className="form-control" value={newTable.status}
+                        onChange={(e) => setNewTable({ ...newTable, status: e.target.value })}>
                         <option value="CHƯA ĐẶT">CHƯA ĐẶT</option>
                         <option value="ĐÃ ĐẶT">ĐÃ ĐẶT</option>
                     </select>
                 </div>
-                <button type="submit" className="btn btn-primary" disabled={loading}>Thêm Bàn</button>
+                <button className="btn btn-primary" type="submit" disabled={loading}>
+                    {editingTable ? "Cập Nhật Bàn" : "Thêm Bàn"}
+                </button>
             </form>
 
-            <h4 className="mt-5">Danh Sách Bàn</h4>
-            <table className="table table-bordered">
-                <thead className="table-light">
+            <table className="table table-bordered mt-3">
+                <thead>
                     <tr>
                         <th>Số Bàn</th>
                         <th>Mô Tả</th>
@@ -150,76 +315,20 @@ function AdminPage() {
                     </tr>
                 </thead>
                 <tbody>
-                    {tables.map((table) => (
+                    {tables.map(table => (
                         <tr key={table.id}>
                             <td>{table.tableNumber}</td>
                             <td>{table.description}</td>
                             <td>{table.status}</td>
                             <td>
-                                <button
-                                    className="btn btn-warning me-2"
-                                    onClick={() => handleEditTable(table)}
-                                    disabled={loading}
-                                >
-                                    Chỉnh Sửa
-                                </button>
-                                <button
-                                    className="btn btn-danger"
-                                    onClick={() => handleDeleteTable(table.id)}
-                                    disabled={loading}
-                                >
-                                    Xóa
-                                </button>
+                                <button className="btn btn-warning me-2" onClick={() => handleEditTable(table)}>Sửa</button>
+                                <button className="btn btn-danger" onClick={() => handleDeleteTable(table.id)}>Xóa</button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
 
-            {editingTable && (
-                <div className="mt-5">
-                    <h4>Chỉnh Sửa Bàn</h4>
-                    <form onSubmit={handleUpdateTable}>
-                        <div className="mb-3">
-                            <label htmlFor="tableNumber" className="form-label">Số Bàn</label>
-                            <input
-                                type="number"
-                                id="tableNumber"
-                                className="form-control"
-                                value={newTable.tableNumber}
-                                onChange={(e) => setNewTable({ ...newTable, tableNumber: e.target.value })}
-                                required
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="description" className="form-label">Mô Tả</label>
-                            <input
-                                type="text"
-                                id="description"
-                                className="form-control"
-                                value={newTable.description}
-                                onChange={(e) => setNewTable({ ...newTable, description: e.target.value })}
-                                required
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="status" className="form-label">Trạng Thái</label>
-                            <select
-                                id="status"
-                                className="form-control"
-                                value={newTable.status}
-                                onChange={(e) => setNewTable({ ...newTable, status: e.target.value })}
-                            >
-                                <option value="CHƯA ĐẶT">CHƯA ĐẶT</option>
-                                <option value="ĐÃ ĐẶT">ĐÃ ĐẶT</option>
-                            </select>
-                        </div>
-                        <button type="submit" className="btn btn-success" disabled={loading}>Cập Nhật Bàn</button>
-                    </form>
-                </div>
-            )}
         </div>
     );
 }
-
-export default AdminPage;

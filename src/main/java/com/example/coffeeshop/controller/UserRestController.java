@@ -18,7 +18,8 @@ import jakarta.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-@CrossOrigin(origins = "http://localhost:3000") 
+
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api")
 public class UserRestController {
@@ -70,8 +71,6 @@ public class UserRestController {
         return ResponseEntity.ok("User registered successfully");
     }
 
-
-
     @PutMapping("/user/update")
     public ResponseEntity<String> updateUserProfile(Authentication authentication, @RequestBody User updatedUser) {
         User user = usersRepository.findByUsername(authentication.getName())
@@ -109,7 +108,7 @@ public class UserRestController {
         usersRepository.deleteById(id);
         return ResponseEntity.ok("User deleted successfully");
     }
-        
+
     static class AuthRequest {
         private String username;
         private String password;
