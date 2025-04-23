@@ -5,7 +5,7 @@ services:
     container_name: mysql
     restart: always
     ports:
-      - "3306:3306" # Đổi 3306 thành 3307
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: hieu@1010
       MYSQL_DATABASE: coffeeshop
@@ -14,8 +14,8 @@ services:
 
   spring-boot-app:
     build:
-      context: . # trỏ tới thư mục gốc (nơi có file docker-compose.yml)
-      dockerfile: ./src/Dockerfile # trỏ đến Dockerfile thực tế của bạn
+      context: .
+      dockerfile: ./src/Dockerfile
     ports:
       - "8080:8080"
     depends_on:

@@ -13,7 +13,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-
+/*---------------------------------------
+ 
+---------------------------------------*/
 @Component
 public class JwtService {
 
@@ -32,7 +34,9 @@ public class JwtService {
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
-
+/*---------------------------------------
+ 
+---------------------------------------*/
     private Key getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET);
         return Keys.hmacShaKeyFor(keyBytes);

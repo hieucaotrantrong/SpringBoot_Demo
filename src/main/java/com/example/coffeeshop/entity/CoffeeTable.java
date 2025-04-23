@@ -7,6 +7,9 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+/*---------------------------------------
+ * 
+---------------------------------------*/
 public class CoffeeTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

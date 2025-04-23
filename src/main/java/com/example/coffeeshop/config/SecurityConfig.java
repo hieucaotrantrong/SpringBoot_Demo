@@ -23,7 +23,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.example.coffeeshop.repository.UsersRepository;
 import com.example.coffeeshop.security.JwtAuthFilter;
-
+/*---------------------------------------
+ * 
+---------------------------------------*/
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -35,7 +37,9 @@ public class SecurityConfig {
         public PasswordEncoder passwordEncoder() {
                 return new BCryptPasswordEncoder();
         }
-
+/*---------------------------------------
+ * 
+---------------------------------------*/
         @Bean
         public UserDetailsService userDetailsService() {
                 return username -> userRepository.findByUsername(username)
@@ -46,7 +50,9 @@ public class SecurityConfig {
                                                 .build())
                                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         }
-
+/*---------------------------------------
+ * 
+---------------------------------------*/
         @Bean
         public AuthenticationManager authenticationManager(HttpSecurity http, UserDetailsService userDetailsService,
                         PasswordEncoder passwordEncoder) throws Exception {
@@ -55,7 +61,9 @@ public class SecurityConfig {
                 authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
                 return authenticationManagerBuilder.build();
         }
-
+/*---------------------------------------
+ * 
+---------------------------------------*/
         @Bean
         public CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration configuration = new CorsConfiguration();
@@ -72,7 +80,9 @@ public class SecurityConfig {
                 return source;
         }
 
-        // SecurityFilterChain cho các endpoint /api/** (dùng JWT)
+        /*---------------------------------------
+ * 
+        ---------------------------------------*/
         @Bean
         @Order(1)
         public SecurityFilterChain apiFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
@@ -94,7 +104,9 @@ public class SecurityConfig {
                 return http.build();
         }
 
-        // SecurityFilterChain cho các endpoint còn lại (dùng form login)
+        /*---------------------------------------
+ * 
+        ---------------------------------------*/
         @Bean
         @Order(2)
         public SecurityFilterChain formLoginFilterChain(HttpSecurity http) throws Exception {

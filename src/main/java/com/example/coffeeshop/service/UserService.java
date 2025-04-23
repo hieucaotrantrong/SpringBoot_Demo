@@ -8,33 +8,44 @@ import com.example.coffeeshop.repository.UsersRepository;
 
 import java.util.List;
 
+/*---------------------------------------
+ * Create user
+ ---------------------------------------*/
 @Service
 public class UserService {
     @Autowired
     private UsersRepository userRepository;
 
-    // Đăng ký người dùng mới
+    /*---------------------------------------
+    * Create user
+    ---------------------------------------*/
     public User register(User user) {
         return userRepository.save(user);
     }
 
-    // Lấy tất cả người dùng
+    /*---------------------------------------
+    * Get all user
+    ---------------------------------------*/
     public List<User> getAll() {
         return userRepository.findAll();
     }
 
-    // Cập nhật thông tin người dùng
+    /*---------------------------------------
+    * Update  user
+    ---------------------------------------*/
     public User updateUser(Long id, User userUpdate) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng với id " + id));
 
-        existingUser.setUsername(userUpdate.getUsername()); // Cập nhật các thông tin khác nếu cần
-        existingUser.setPassword(userUpdate.getPassword()); // Giả sử bạn cập nhật mật khẩu
+        existingUser.setUsername(userUpdate.getUsername());
+        existingUser.setPassword(userUpdate.getPassword());
 
         return userRepository.save(existingUser);
     }
 
-    // Xóa người dùng
+    /*---------------------------------------
+    * Delate user
+    ---------------------------------------*/
     public void deleteUser(Long id) {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
@@ -42,4 +53,7 @@ public class UserService {
             throw new RuntimeException("Không thể xóa người dùng. Người dùng không tồn tại.");
         }
     }
+    /*---------------------------------------
+    * Log
+    ---------------------------------------*/
 }

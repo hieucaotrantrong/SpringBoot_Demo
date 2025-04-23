@@ -8,6 +8,9 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")
+/*---------------------------------------
+ * 
+---------------------------------------*/
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +22,9 @@ public class User {
     private int age;
     private String address;
 
-   
+   /*---------------------------------------
+    * 
+-   --------------------------------------*/
     public User() {}
 
     public User(String username, String password, String role, String name, int age, String address) {
@@ -31,7 +36,9 @@ public class User {
         this.address = address;
     }
 
-    
+    /*---------------------------------------
+ * 
+    ---------------------------------------*/
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getUsername() { return username; }
@@ -46,4 +53,7 @@ public class User {
     public void setAge(int age) { this.age = age; }
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
+    /*---------------------------------------
+ * 
+---------------------------------------*/
 }
