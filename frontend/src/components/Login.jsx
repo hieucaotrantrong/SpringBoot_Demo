@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Login() {
+    const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        localStorage.removeItem('token');
+    }, []);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -21,15 +27,14 @@ function Login() {
             const token = response.data;
             localStorage.setItem('token', token);
 
-            // Giải mã JWT để lấy role
             const base64Payload = token.split('.')[1];
             const payload = JSON.parse(atob(base64Payload));
             const role = payload.roles;
 
             if (role === 'ROLE_ADMIN') {
-                window.location.href = '/admin';
+                navigate('/admin');
             } else if (role === 'ROLE_USER') {
-                window.location.href = '/user';
+                navigate('/user');
             } else {
                 setError('Tài khoản không hợp lệ');
             }
@@ -137,3 +142,4 @@ function Login() {
 }
 
 export default Login;
+

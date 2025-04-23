@@ -27,7 +27,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 public class UserRestController {
-
+    /*---------------------------------------
+     * 
+    ---------------------------------------*/
     @Autowired
     private UsersRepository usersRepository;
 
@@ -133,9 +135,6 @@ public class UserRestController {
         usersRepository.deleteById(id);
         return ResponseEntity.ok("User deleted successfully");
     }
-    /*---------------------------------------
-     * 
-    ---------------------------------------*/
 
     /*---------------------------------------
      * 

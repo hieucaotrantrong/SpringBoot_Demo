@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../services/axiosInstance";
+import { useNavigate } from 'react-router-dom';
+
 /*---------------------------------------
  * 
 ---------------------------------------*/
@@ -23,6 +25,13 @@ export default function AdminPage() {
     const [loading, setLoading] = useState(false);
 
     const token = localStorage.getItem("token");
+
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        navigate('/');
+    };
 
     /*---------------------------------------
     * Fetch User
@@ -210,7 +219,12 @@ export default function AdminPage() {
 
     return (
         <div className="container mt-5">
-            <h2>Xin chào Admin!</h2>
+            <div className="d-flex justify-content-between align-items-center">
+                <h2>Xin chào Admin!</h2>
+                <button className="btn btn-danger" onClick={handleLogout}>
+                    Đăng xuất
+                </button>
+            </div>
             <p>Trang quản lý người dùng và bàn</p>
 
             {/* Người Dùng */}
@@ -342,3 +356,4 @@ export default function AdminPage() {
         </div>
     );
 }
+

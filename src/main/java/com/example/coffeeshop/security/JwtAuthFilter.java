@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+
 /*---------------------------------------
  * 
 ---------------------------------------*/
@@ -26,9 +27,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userDetailsService;
 
-/*---------------------------------------
- * All list check no token
----------------------------------------*/
+    /*---------------------------------------
+     * All list check no token
+    ---------------------------------------*/
     private static final String[] PUBLIC_ENDPOINTS = {
             "/api/register",
             "/api/generateToken",
@@ -40,14 +41,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
         for (String publicEndpoint : PUBLIC_ENDPOINTS) {
             if (path.equals(publicEndpoint)) {
-                return true; 
+                return true;
             }
         }
         return false;
     }
-/*---------------------------------------
 
----------------------------------------*/
+    /*---------------------------------------
+    
+    ---------------------------------------*/
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {

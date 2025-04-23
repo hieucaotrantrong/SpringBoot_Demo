@@ -14,7 +14,6 @@ public class CoffeeTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private Integer tableNumber;
     private String description;
     private String status;

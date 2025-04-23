@@ -23,6 +23,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.example.coffeeshop.repository.UsersRepository;
 import com.example.coffeeshop.security.JwtAuthFilter;
+
 /*---------------------------------------
  * 
 ---------------------------------------*/
@@ -37,9 +38,10 @@ public class SecurityConfig {
         public PasswordEncoder passwordEncoder() {
                 return new BCryptPasswordEncoder();
         }
-/*---------------------------------------
- * 
----------------------------------------*/
+
+        /*---------------------------------------
+         * 
+        ---------------------------------------*/
         @Bean
         public UserDetailsService userDetailsService() {
                 return username -> userRepository.findByUsername(username)
@@ -50,9 +52,10 @@ public class SecurityConfig {
                                                 .build())
                                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         }
-/*---------------------------------------
- * 
----------------------------------------*/
+
+        /*---------------------------------------
+         * 
+        ---------------------------------------*/
         @Bean
         public AuthenticationManager authenticationManager(HttpSecurity http, UserDetailsService userDetailsService,
                         PasswordEncoder passwordEncoder) throws Exception {
@@ -61,13 +64,14 @@ public class SecurityConfig {
                 authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
                 return authenticationManagerBuilder.build();
         }
-/*---------------------------------------
- * 
----------------------------------------*/
+
+        /*---------------------------------------
+         * 
+        ---------------------------------------*/
         @Bean
         public CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration configuration = new CorsConfiguration();
-                configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); 
+                configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
                 configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 configuration.setAllowedHeaders(Arrays.asList("*")); // Cho phép tất cả header add 2 dong
                 configuration.setExposedHeaders(Arrays.asList("Authorization"));
@@ -81,7 +85,7 @@ public class SecurityConfig {
         }
 
         /*---------------------------------------
- * 
+        * 
         ---------------------------------------*/
         @Bean
         @Order(1)
@@ -91,7 +95,8 @@ public class SecurityConfig {
                                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                                 .csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("/api/register", "/api/generateToken", "/api/welcome").permitAll()
+                                                .requestMatchers("/api/register", "/api/generateToken", "/api/welcome")
+                                                .permitAll()
                                                 .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
                                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                                 .anyRequest().authenticated())
@@ -105,7 +110,7 @@ public class SecurityConfig {
         }
 
         /*---------------------------------------
- * 
+        * 
         ---------------------------------------*/
         @Bean
         @Order(2)

@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axiosInstance from "../services/axiosInstance";
 
 function UserPage() {
     const [tables, setTables] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchTables();
     }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        navigate('/');
+    };
 
     const fetchTables = () => {
         setLoading(true);
@@ -40,7 +47,13 @@ function UserPage() {
 
     return (
         <div className="container py-5">
-            <h2 className="mb-4 text-center text-primary fw-bold">📋 Danh sách bàn</h2>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h2 className="text-primary fw-bold">📋 Danh sách bàn</h2>
+                <button className="btn btn-danger" onClick={handleLogout}>
+                    Đăng xuất
+                </button>
+            </div>
+            
             <div className="row">
                 {tables.map(table => (
                     <div key={table.id} className="col-md-4 mb-4">
@@ -70,3 +83,4 @@ function UserPage() {
 }
 
 export default UserPage;
+
