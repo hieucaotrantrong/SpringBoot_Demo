@@ -1,0 +1,40 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    ports:
+      - "3306:3306" # Đổi 3306 thành 3307
+    environment:
+      MYSQL_ROOT_PASSWORD: hieu@1010
+      MYSQL_DATABASE: coffeeshop
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  spring-boot-app:
+    build:
+      context: . # trỏ tới thư mục gốc (nơi có file docker-compose.yml)
+      dockerfile: ./src/Dockerfile # trỏ đến Dockerfile thực tế của bạn
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/coffeeshop
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: hieu@1010
+
+  react-app:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: react-app
+    restart: always
+    ports:
+      - "3000:80"
+
+volumes:
+  mysql-data:
+
+

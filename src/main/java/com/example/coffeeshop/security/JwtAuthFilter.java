@@ -24,7 +24,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    // Danh sách các endpoint không cần kiểm tra token
+/*---------------------------------------
+ * All list check no token
+---------------------------------------*/
     private static final String[] PUBLIC_ENDPOINTS = {
             "/api/register",
             "/api/generateToken",
@@ -36,7 +38,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
         for (String publicEndpoint : PUBLIC_ENDPOINTS) {
             if (path.equals(publicEndpoint)) {
-                return true; // Bỏ qua filter cho các endpoint công khai
+                return true; 
             }
         }
         return false;

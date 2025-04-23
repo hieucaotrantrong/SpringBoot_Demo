@@ -12,28 +12,38 @@ public class CoffeeTableService {
     @Autowired
     private CoffeeTableRepository tableRepository;
 
-    // Tạo bàn mới
+    /*---------------------------------------
+    * Create table new
+    ---------------------------------------*/
     public CoffeeTable createTable(CoffeeTable table) {
         return tableRepository.save(table);
     }
 
-    // Lấy tất cả bàn
+    /*---------------------------------------
+    * All list table
+    ---------------------------------------*/
     public List<CoffeeTable> getAllTables() {
         return tableRepository.findAll();
     }
 
-    // Lấy bàn theo ID
+    /*---------------------------------------
+    * All list table by id
+    ---------------------------------------*/
     public CoffeeTable getTableById(Long id) {
         return tableRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy bàn với id " + id));
     }
 
-    // Cập nhật bàn
+    /*---------------------------------------
+    * Update table by id
+    ---------------------------------------*/
     public CoffeeTable updateTable(CoffeeTable table) {
         return tableRepository.save(table);
     }
 
-    // Xóa bàn
+    /*---------------------------------------
+    * delete table by id
+    ---------------------------------------*/
     public void deleteTable(Long id) {
         if (tableRepository.existsById(id)) {
             tableRepository.deleteById(id);

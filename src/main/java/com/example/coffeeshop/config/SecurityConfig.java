@@ -77,13 +77,11 @@ public class SecurityConfig {
         @Order(1)
         public SecurityFilterChain apiFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
                 http
-                                .securityMatcher("/api/**") // Chỉ áp dụng cho các yêu cầu /api/**
+                                .securityMatcher("/api/**")
                                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                                .csrf(csrf -> csrf.disable()) // Tắt CSRF cho API
-                                .formLogin(form -> form.disable()) // Tắt form login cho /api/**
+                                .csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("/api/register", "/api/generateToken", "/api/welcome")
-                                                .permitAll()
+                                                .requestMatchers("/api/register", "/api/generateToken", "/api/welcome").permitAll()
                                                 .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
                                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                                 .anyRequest().authenticated())

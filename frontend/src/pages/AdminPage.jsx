@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../services/axiosInstance";
-
+/*---------------------------------------
+ * 
+---------------------------------------*/
 export default function AdminPage() {
     const [users, setUsers] = useState([]);
     const [newUser, setNewUser] = useState({
@@ -22,7 +24,9 @@ export default function AdminPage() {
 
     const token = localStorage.getItem("token");
 
-    // Fetch người dùng
+    /*---------------------------------------
+    * Fetch User
+    ---------------------------------------*/
     const fetchUsers = async () => {
         try {
             const response = await fetch("/api/admin/users", {
@@ -35,7 +39,9 @@ export default function AdminPage() {
         }
     };
 
-    // Fetch bàn
+    /*---------------------------------------
+    * Fetch Table
+    ---------------------------------------*/
     const fetchTables = () => {
         axiosInstance.get('/admin/tables/all')
             .then(response => setTables(response.data))
@@ -50,7 +56,9 @@ export default function AdminPage() {
         fetchTables();
     }, []);
 
-    // Thêm người dùng
+    /*---------------------------------------
+    * Add user
+    ---------------------------------------*/
     const handleCreateUser = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -76,7 +84,9 @@ export default function AdminPage() {
         }
     };
 
-    // Chỉnh sửa người dùng
+    /*---------------------------------------
+    *Update user
+    ---------------------------------------*/
     const handleEditUser = (user) => {
         setEditingUser(user);
         setNewUser({

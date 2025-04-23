@@ -2,6 +2,7 @@ package com.example.coffeeshop.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,7 +19,9 @@ import jakarta.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/*---------------------------------------
+ * 
+---------------------------------------*/
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api")
@@ -35,7 +38,9 @@ public class UserRestController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
-
+/*---------------------------------------
+ * 
+---------------------------------------*/
     @PostConstruct
     public void initAdmin() {
         if (usersRepository.findByUsername("admin").isEmpty()) {
@@ -44,7 +49,9 @@ public class UserRestController {
             usersRepository.save(admin);
         }
     }
-
+/*---------------------------------------
+ * 
+---------------------------------------*/
     @PostMapping("/generateToken")
     public ResponseEntity<String> generateToken(@RequestBody AuthRequest authRequest) {
         Authentication authentication = authenticationManager.authenticate(
@@ -55,14 +62,16 @@ public class UserRestController {
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
             Map<String, Object> claims = new HashMap<>();
-            claims.put("roles", user.getRole()); // Thêm dòng này
+            claims.put("roles", user.getRole()); 
 
             return ResponseEntity.ok(jwtService.generateToken(authRequest.getUsername(), claims));
         } else {
             throw new UsernameNotFoundException("Invalid credentials");
         }
     }
-
+/*---------------------------------------
+ * Singup admin
+---------------------------------------*/
     @PostMapping("/admin/register")
     public ResponseEntity<String> register(@RequestBody User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -70,7 +79,9 @@ public class UserRestController {
         usersRepository.save(user);
         return ResponseEntity.ok("User registered successfully");
     }
-
+/*---------------------------------------
+ * Update Admin
+---------------------------------------*/
     @PutMapping("/user/update")
     public ResponseEntity<String> updateUserProfile(Authentication authentication, @RequestBody User updatedUser) {
         User user = usersRepository.findByUsername(authentication.getName())
@@ -81,12 +92,16 @@ public class UserRestController {
         usersRepository.save(user);
         return ResponseEntity.ok("Profile updated successfully");
     }
-
+/*---------------------------------------
+ * All users
+---------------------------------------*/
     @GetMapping("/admin/users")
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(usersRepository.findAll());
     }
-
+/*---------------------------------------
+ * update user flower id
+---------------------------------------*/
     @PutMapping("/admin/users/{id}")
     public ResponseEntity<String> updateUserByAdmin(@PathVariable Long id, @RequestBody User updatedUser) {
         User user = usersRepository.findById(id)
@@ -102,13 +117,22 @@ public class UserRestController {
         usersRepository.save(user);
         return ResponseEntity.ok("User updated by admin");
     }
-
+/*---------------------------------------
+ * 
+---------------------------------------*/
     @DeleteMapping("/admin/users/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         usersRepository.deleteById(id);
         return ResponseEntity.ok("User deleted successfully");
     }
+/*---------------------------------------
+ * 
+---------------------------------------*/
 
+
+/*---------------------------------------
+ * 
+---------------------------------------*/
     static class AuthRequest {
         private String username;
         private String password;
