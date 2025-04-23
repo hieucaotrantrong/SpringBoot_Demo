@@ -3,7 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 
 const PrivateRoute = ({ children, requiredRole }) => {
     const token = localStorage.getItem('token');
-    
+
     if (!token) {
         return <Navigate to="/" replace />;
     }
