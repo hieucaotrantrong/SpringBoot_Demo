@@ -87,20 +87,6 @@ public class UserRestController {
     }
 
     /*---------------------------------------
-     * Update Admin
-    ---------------------------------------*/
-    @PutMapping("/user/update")
-    public ResponseEntity<String> updateUserProfile(Authentication authentication, @RequestBody User updatedUser) {
-        User user = usersRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        user.setName(updatedUser.getName());
-        user.setAge(updatedUser.getAge());
-        user.setAddress(updatedUser.getAddress());
-        usersRepository.save(user);
-        return ResponseEntity.ok("Profile updated successfully");
-    }
-
-    /*---------------------------------------
      * All users
     ---------------------------------------*/
     @GetMapping("/admin/users")

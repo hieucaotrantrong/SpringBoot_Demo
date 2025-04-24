@@ -34,13 +34,16 @@ public class SecurityConfig {
         @Autowired
         private UsersRepository userRepository;
 
+        /*---------------------------------------
+         * 
+        ---------------------------------------*/
         @Bean
         public PasswordEncoder passwordEncoder() {
                 return new BCryptPasswordEncoder();
         }
 
         /*---------------------------------------
-         * 
+         * Xac thuc nguoi dung
         ---------------------------------------*/
         @Bean
         public UserDetailsService userDetailsService() {
@@ -101,9 +104,7 @@ public class SecurityConfig {
                                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                                 .anyRequest().authenticated())
                                 .sessionManagement(session -> session
-                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Stateless cho
-                                                                                                        // API
-                                )
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();

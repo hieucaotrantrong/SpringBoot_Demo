@@ -72,7 +72,8 @@ export default function AdminPage() {
         e.preventDefault();
         setLoading(true);
         try {
-            const response = await fetch("/api/admin/register", {
+            //api
+            const response = await fetch("api/admin/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -94,7 +95,7 @@ export default function AdminPage() {
     };
 
     /*---------------------------------------
-    *Update user
+    *Update edit user
     ---------------------------------------*/
     const handleEditUser = (user) => {
         setEditingUser(user);
@@ -108,7 +109,10 @@ export default function AdminPage() {
         });
     };
 
-    // Cập nhật người dùng
+
+    /*---------------------------------------
+    *Update user
+    ---------------------------------------*/
     const handleUpdateUser = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -133,7 +137,10 @@ export default function AdminPage() {
         }
     };
 
-    // Xóa người dùng
+
+    /*---------------------------------------
+    *delete user
+    ---------------------------------------*/
     const handleDeleteUser = async (id) => {
         if (!window.confirm("Bạn có chắc muốn xóa người dùng này?")) return;
         try {
@@ -147,7 +154,10 @@ export default function AdminPage() {
         }
     };
 
-    // Thêm bàn mới
+
+    /*---------------------------------------
+    *add table
+    ---------------------------------------*/
     const handleCreateTable = (e) => {
         e.preventDefault();
         if (!newTable.tableNumber || !newTable.description) {
